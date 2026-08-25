@@ -1,0 +1,715 @@
+
+
+*{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;background:#101215;color:#eee}
+body{background:radial-gradient(circle at 70% 25%,#30343a 0,#171a1e 38%,#090a0c 100%)}
+.scene{position:relative;width:100vw;height:100vh;overflow:hidden}
+.bg-road{position:absolute;inset:0;background:
+ linear-gradient(105deg,transparent 0 20%,rgba(255,255,255,.035) 20.2% 20.5%,transparent 20.7%),
+ linear-gradient(90deg,transparent 0 58%,rgba(255,255,255,.025) 58.2% 58.4%,transparent 58.6%),
+ linear-gradient(0deg,rgba(0,0,0,.55),transparent 45%),
+ radial-gradient(ellipse at 55% 80%,#34383d 0,#1b1e22 28%,#0c0e11 70%)}
+.roadline{position:absolute;width:46vw;height:5px;background:rgba(220,220,190,.55);transform:rotate(-5deg);bottom:19%;left:36%;box-shadow:0 0 15px rgba(255,255,255,.08)}
+.hud{position:absolute;inset:0;pointer-events:none}
+.speed{position:absolute;right:32px;bottom:28px;text-align:right}
+.speed .num{font-size:52px;font-weight:700;line-height:.9}.speed small{font-size:12px;color:#aaa}
+.minimap:before,.minimap:after{content:"";position:absolute;background:#777;opacity:.45}
+.minimap:before{width:3px;height:90px;left:65px;top:20px;transform:rotate(28deg)}
+.minimap:after{width:115px;height:3px;left:25px;top:70px;transform:rotate(-17deg)}
+.rls{position:absolute;left:28px;bottom:28px;background:rgba(8,9,10,.62);border-left:3px solid #d17a25;padding:10px 14px;width:245px}
+.rls .title{font-weight:700;font-size:12px}.rls .sub{font-size:10px;color:#9ea4aa;margin-top:4px}
+.toast{position:absolute;right:225px;top:28px;min-width:300px;padding:14px 18px;background:linear-gradient(90deg,rgba(8,9,10,.94),rgba(20,22,24,.82));border:1px solid #3e4246;border-left:3px solid #f07b22;font-size:13px;letter-spacing:1.2px;font-weight:700;color:#e1e4e6;opacity:0;transform:translateY(-6px);transition:.3s;box-shadow:0 8px 24px #0008;z-index:8}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.phone{position:absolute;left:30px;top:50%;transform:translateY(-50%) translateX(-430px);width:358px;height:664px;filter:drop-shadow(0 18px 35px rgba(0,0,0,.65));transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:10}
+.phone.open{transform:translateY(-50%) translateX(0)}
+.body{position:absolute;inset:0;border-radius:42px 42px 48px 48px;background:linear-gradient(145deg,#55585b 0%,#202225 8%,#111315 52%,#070809 100%);border:2px solid #8a8d90;box-shadow:inset 0 0 0 3px #08090a,inset 0 0 0 5px #1f2225,inset 0 0 30px #000,0 0 0 1px #000,0 18px 35px rgba(0,0,0,.65);overflow:hidden}
+
+.speaker{position:absolute;top:28px;left:50%;transform:translateX(-50%);width:86px;height:9px;border-radius:8px;background:linear-gradient(#050607,#242629,#050607);border:1px solid #050505;box-shadow:inset 0 1px 2px #000,0 1px 0 #777}.speaker:after{content:"";position:absolute;left:7px;right:7px;top:3px;height:2px;background:repeating-linear-gradient(90deg,#151719 0 2px,#3e4144 2px 4px);opacity:.9}.camera{position:absolute;top:28px;right:63px;width:8px;height:8px;border-radius:50%;background:#090a0b;border:1px solid #383b3e;box-shadow:inset 0 0 3px #000}
+.brand{position:absolute;top:49px;left:0;right:0;text-align:center;color:#d9dcdf;font-weight:800;letter-spacing:2.5px;font-size:18px;text-shadow:0 1px 0 #000,0 0 8px #000}.brand::first-letter{color:#e87920}
+.screen{position:absolute;left:23px;right:23px;top:40px;height:438px;background:#0d1112;border:6px solid #070809;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 25px #000}
+.screen:before{content:"";position:absolute;left:16%;right:16%;top:32px;height:1px;background:linear-gradient(90deg,transparent,#e87920,transparent);opacity:.55;z-index:2}.screen:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.02),transparent 35%,rgba(0,0,0,.08));mix-blend-mode:screen}
+.status{height:27px;background:linear-gradient(#171b1d,#0e1112);border-bottom:1px solid #4a4d50;display:flex;align-items:center;justify-content:space-between;padding:0 9px;color:#c3c7ca;font-size:10px}
+.home{padding:14px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px}
+.app{height:69px;text-align:center;cursor:pointer;color:#cbd1d2;font-size:9px;user-select:none}
+.icon{width:55px;height:55px;margin:0 auto 6px;border:1px solid #4a5556;border-radius:8px;background:linear-gradient(#151819,#090b0c);display:flex;align-items:center;justify-content:center;color:#f07b22;font-weight:800;font-size:20px;text-shadow:0 0 6px #f07b2233;box-shadow:inset 0 0 10px #000}
+.app:hover .icon{border-color:#e38b35;box-shadow:0 0 10px #e38b3544}
+.view{display:none;height:calc(100% - 28px);padding:15px}
+.view.active{display:block}
+.back{color:#e38b35;font-size:11px;cursor:pointer;margin-bottom:14px}
+.heading{font-size:18px;font-weight:700;margin-bottom:12px}
+.row{padding:11px 8px;border-bottom:1px solid #283032;font-size:11px}.row span{display:block;color:#8d999b;font-size:9px;margin-top:4px}
+/* Unowned Burner state */
+.owner-lock.unlocked .lock-symbol{border-color:#e87920;color:#f07b22}
+.owner-lock.unlocked .lock-title::after{content:'UNLOCKED BY OWNER';}
+.owner-lock.unlocked .lock-title{font-size:0}
+.owner-lock.unlocked .lock-title::after{font-size:13px}
+.owner-lock{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#050707;color:#cfd3d4}
+.lock-symbol{width:58px;height:58px;border:2px solid #666d70;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#e0e3e4;margin-bottom:14px;box-shadow:0 0 20px #000}
+.lock-title{font-size:13px;font-weight:800;letter-spacing:1px;color:#e0e3e4}
+.conversation{position:absolute;left:10px;right:10px;top:55px;bottom:92px;overflow-y:auto;padding:4px 3px 10px;display:flex;flex-direction:column;gap:8px}
+.bubble{max-width:86%;padding:8px 10px;border-radius:9px;font-size:9px;line-height:1.45}
+.bubble.them{align-self:flex-start;background:#202526;border:1px solid #3b4244;color:#e3e6e7;border-bottom-left-radius:3px}
+.bubble.you{align-self:flex-end;background:#8f430f;border:1px solid #c7661a;color:#fff;border-bottom-right-radius:3px}
+.reply-history{display:flex;flex-direction:column;gap:8px}
+.followup-bubble:empty{display:none}
+.typing-indicator{position:absolute;inset:0;background:rgba(3,5,6,.985);z-index:60;display:none;padding:0}
+.typing-indicator.active{display:block}
+.typing-header{height:46px;border-bottom:1px solid #343b3d;padding:10px;color:#e4e7e8;font-size:10px}
+.typing-body{padding:22px 14px;color:#9ba4a6;font-size:11px}
+.dots{color:#f07b22;margin-left:3px;letter-spacing:2px}
+.followup-message{position:absolute;inset:0;background:#050707;z-index:55;display:none;padding:78px 18px 18px;color:#eef0f0;font-size:13px;line-height:1.55}
+.followup-message.active{display:block}
+#homeGrid{display:none}
+#homeGrid.locked{display:none}
+#ownerLock.unlocked{display:none}
+#homeGrid:not(.locked){display:grid}
+.incoming-overlay{position:absolute;inset:0;background:rgba(3,5,6,.985);z-index:50;display:none}
+.incoming-overlay.active{display:block}
+.incoming-head{height:46px;border-bottom:1px solid #343b3d;padding:10px;color:#e4e7e8;font-size:10px}
+.incoming-head .number{color:#f07b22;font-weight:700;margin-top:3px}
+.incoming-message{padding:22px 14px;font-size:13px;line-height:1.45;color:#f0f1f1}
+.reply-options{position:absolute;left:10px;right:10px;bottom:12px;display:flex;flex-direction:column;gap:7px}
+.reply-btn{border:1px solid #4c5355;background:linear-gradient(#24292a,#111415);color:#dce0e1;text-align:left;padding:10px;border-radius:5px;font-size:9px;cursor:pointer}
+.reply-btn:hover{border-color:#e87920;color:#fff}
+.message-list{margin-top:6px;display:flex;flex-direction:column;gap:6px}
+.message-contact{display:grid;grid-template-columns:32px 1fr 14px;align-items:center;gap:8px;padding:8px;border:1px solid #363d3f;border-radius:6px;background:linear-gradient(#181c1d,#0d1011);cursor:pointer}
+.contact-avatar{width:30px;height:30px;border:1px solid #777d7f;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f07b22;font-weight:800;background:#101314}
+.contact-name{font-size:10px;font-weight:800;color:#e3e6e7}
+.message-preview{font-size:7px;color:#858e90;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.message-arrow{color:#f07b22;font-size:16px}
+.empty-inbox{text-align:center;color:#727b7d;font-size:8px;padding:30px 0}
+.stored-conversation{position:absolute;left:10px;right:10px;top:55px;bottom:10px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;padding:5px}
+.stored-bubble{max-width:86%;padding:8px 10px;border-radius:9px;font-size:9px;line-height:1.45}
+.stored-bubble.them{align-self:flex-start;background:#202526;border:1px solid #3b4244;color:#e3e6e7;border-bottom-left-radius:3px}
+.stored-bubble.you{align-self:flex-end;background:#8f430f;border:1px solid #c7661a;color:#fff;border-bottom-right-radius:3px}
+.stored-bubble:empty{display:none}
+.download-list{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.download-app{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:9px;padding:9px 7px;border:1px solid #343b3d;border-radius:6px;background:linear-gradient(90deg,#101516,#171b1c);box-shadow:inset 0 1px 0 #303536}
+.download-icon{width:34px;height:34px;border:1px solid #d96f1d;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#f07b22;font-size:15px;background:#0b0e0f}
+.download-name{font-size:12px;font-weight:700;color:#e0e3e4}
+.download-desc{font-size:8px;color:#8d999b;margin-top:3px;white-space:nowrap}
+.download-btn{border:1px solid #c86419;background:linear-gradient(#e47b25,#9f4810);color:#fff;font-size:7px;font-weight:700;padding:6px 7px;border-radius:4px;cursor:pointer}
+.download-btn:hover{background:linear-gradient(#f28b32,#b65313)}
+.download-btn.installed{background:linear-gradient(#303638,#1b1f20);border-color:#555c5e;color:#aeb4b5}
+.download-btn.locked{background:linear-gradient(#303638,#1b1f20);border-color:#555c5e;color:#888f91;cursor:not-allowed}
+.empty-market{height:calc(100% - 45px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#aab2b3}
+.empty-icon{width:54px;height:54px;border:1px solid #d96f1d;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#f07b22;font-size:24px;margin-bottom:14px;background:#0a0d0e;box-shadow:0 0 16px #d96f1d22}
+.empty-title{font-size:13px;font-weight:800;color:#e0e3e4;letter-spacing:.5px}.empty-text{font-size:9px;color:#7f898b;line-height:1.6;margin-top:7px}
+.wallet-ui{height:calc(100% - 5px);margin:-3px -3px 0;padding:12px;background:linear-gradient(160deg,#19100a 0,#0b0d0e 48%,#17100b 100%);border:1px solid #6d3b18;border-radius:5px;color:#d8dcdd}
+.wallet-brand{font-size:17px;font-weight:900;line-height:.9;color:#f07b22;letter-spacing:1px}.wallet-brand span{font-size:7px;color:#9fa5a7;letter-spacing:2px}
+.wallet-status{font-size:7px;color:#8c9698;margin-top:9px;border-bottom:1px solid #3d2a1c;padding-bottom:7px}.wallet-status b{color:#e57920;float:right}
+.wallet-balance{margin:17px 0;padding:12px;border-left:3px solid #e87920;background:#120f0d}.wallet-label{font-size:7px;color:#858e90;letter-spacing:1px}.wallet-value{font-size:27px;font-weight:800;color:#f0f1f1;margin-top:4px}
+.wallet-row{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid #292a2a;font-size:8px;color:#8d9698}.wallet-row b{color:#e0e3e4}.wallet-footer{font-size:6px;color:#697173;line-height:1.5;margin-top:18px}
+.locked{display:flex;height:100%;align-items:center;justify-content:center;text-align:center;padding:25px;color:#aab2b3}
+.locked strong{display:block;color:#e38b35;font-size:16px;margin-bottom:8px}
+.keyboard{position:absolute;left:18px;right:18px;bottom:7px;height:151px;border-top:0;padding-top:7px;overflow:hidden}
+.keys{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.key{height:27px;border-radius:4px;background:linear-gradient(#55595d,#24272a 55%,#111214);border:1px solid #08090a;box-shadow:0 2px 0 #050506,inset 0 1px 0 #777b7e;color:#d0d3d5;font-size:9px;display:flex;align-items:center;justify-content:center}
+.nav{position:absolute;top:424px;left:25px;right:25px;height:50px;border-radius:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;align-items:stretch;}
+.navbtn{border-radius:6px;background:linear-gradient(#34373a,#111315);border:1px solid #050607;box-shadow:inset 0 1px 0 #777b7e,0 2px 0 #050506;display:flex;align-items:center;justify-content:center;color:#c9ccce;font-size:18px}.navbtn.center{border-color:#8a8d90;box-shadow:inset 0 1px 0 #b5b8ba,0 2px 0 #050506;color:#f07b22}.navbtn.green{color:#65c96d}.navbtn.red{color:#d83b37}
+.controls{position:absolute;left:32px;bottom:22px;background:linear-gradient(90deg,rgba(9,10,11,.9),rgba(22,24,26,.72));padding:9px 13px;border-left:3px solid #f07b22;border-top:1px solid #3f4347;border-right:1px solid #2c2f32;border-bottom:1px solid #2c2f32;font-size:10px;color:#d0d3d5;z-index:20;box-shadow:0 6px 18px #0007}
+kbd{padding:2px 5px;border:1px solid #777;border-radius:3px;background:#222;color:#fff}
+
+
+@media(max-width:900px){
+  .phone{width:300px;height:560px}
+  .screen{left:20px;right:20px;top:34px;height:375px}
+  .keyboard{left:15px;right:15px;bottom:7px;height:128px;padding-top:5px}
+  .keys{gap:2px}
+  .key{height:22px;font-size:8px}
+  .nav{left:20px;right:20px;top:417px;height:38px;gap:3px}
+  .phone-btn{height:38px;font-size:14px}
+  .phone-btn.center{height:38px}
+  .controls{display:none}
+}
+
+
+
+/* =========================================================
+   SIDEWIRE — CLEAN BEAMNG PRESENTATION LAYER v33
+   ========================================================= */
+html,body {
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:#000;
+}
+
+.game-preview {
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#000;
+}
+
+.world {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  background:#000 url("assets/beamng_background.png") center center / cover no-repeat;
+}
+
+.world::before,
+.world::after {
+  display:none !important;
+  content:none !important;
+}
+
+.road,
+.building,
+.street-light,
+.scene-horizon,
+.scene-car,
+.scene-road-line {
+  display:none !important;
+}
+
+.world-vignette {
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.06),transparent 24%,transparent 78%,rgba(0,0,0,.18)),
+    radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.15) 100%);
+}
+
+.center-crosshair {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:7px;
+  height:7px;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  opacity:.35;
+  z-index:6;
+  pointer-events:none;
+}
+
+.phone-anchor {
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  width:358px;
+  height:664px;
+  z-index:20;
+  transform:none;
+  pointer-events:none;
+}
+
+.phone-anchor .phone {
+  pointer-events:auto;
+  position:absolute;
+  left:0;
+  top:0;
+  transform:translateX(-430px);
+}
+
+.phone-anchor .phone.open {
+  transform:translateX(0);
+}
+
+.toast {
+  z-index:30;
+}
+
+@media(max-width:900px) {
+  .phone-anchor {
+    left:10px;
+    bottom:10px;
+    top:auto;
+    width:300px;
+    height:560px;
+  }
+  .phone-anchor .phone {
+    width:300px;
+    height:560px;
+  }
+  .phone-anchor .phone.open {
+    transform:translateY(-50%) translateX(0);
+  }
+  .rls-panel {
+    right:12px;
+    top:12px;
+    width:125px;
+  }
+  .hud-bottom-left {
+    left:12px;
+    bottom:12px;
+  }
+}
+
+
+/* v35 — story message must never cover the phone controls */
+.phone-anchor .screen{
+  position:absolute;
+  left:20px;
+  right:20px;
+  top:34px;
+  height:375px;
+  overflow:hidden;
+  z-index:5;
+}
+
+.phone-anchor .nav{
+  position:absolute;
+  left:20px;
+  right:20px;
+  top:417px;
+  height:38px;
+  z-index:30 !important;
+  pointer-events:auto !important;
+}
+
+.phone-anchor .controls{
+  position:absolute;
+  z-index:31 !important;
+  pointer-events:auto !important;
+}
+
+.phone-anchor .keyboard{
+  position:absolute;
+  z-index:29 !important;
+  pointer-events:auto !important;
+}
+
+.phone-anchor .incoming-overlay,
+.phone-anchor .typing-indicator,
+.phone-anchor .followup-message{
+  z-index:20 !important;
+  pointer-events:auto;
+}
+
+/* The story UI is visually confined to the display and cannot spill into
+   the physical nav/control area. */
+.phone-anchor .incoming-overlay{
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  bottom:0 !important;
+  overflow:hidden !important;
+}
+
+
+/* =========================================================
+   SIDEWIRE — CLEAN CUSTOM PRESENTATION BACKGROUND v36
+   ========================================================= */
+html, body {
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:#08090a;
+}
+
+.game-preview {
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(48,52,54,.38) 0%, rgba(19,21,22,.20) 34%, rgba(5,6,7,.94) 82%),
+    linear-gradient(135deg,#111416 0%,#080a0b 50%,#111416 100%);
+}
+
+.world {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at center, rgba(43,47,49,.22) 0%, rgba(7,8,9,.84) 74%),
+    linear-gradient(180deg,#101314 0%,#070809 100%);
+}
+
+.world::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, transparent 49.92%, rgba(232,121,32,.075) 50%, transparent 50.08%),
+    linear-gradient(0deg, transparent 49.92%, rgba(232,121,32,.045) 50%, transparent 50.08%);
+  opacity:.45;
+}
+
+.world::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 80px);
+  opacity:.35;
+}
+
+.world-vignette {
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at center, transparent 36%, rgba(0,0,0,.46) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.18),transparent 28%,transparent 75%,rgba(0,0,0,.35));
+}
+
+/* Remove all old gameplay-scene geometry. */
+.road,.building,.street-light,.scene-horizon,.scene-car,.scene-road-line {
+  display:none !important;
+}
+
+/* Central SideWire branding. */
+.world::marker { display:none; }
+
+.sidewire-brand {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(430px,34vw);
+  transform:translate(-50%,-50%);
+  z-index:5;
+  opacity:.92;
+  pointer-events:none;
+  filter:drop-shadow(0 8px 28px rgba(0,0,0,.72));
+}
+
+.sidewire-brand img {
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.sidewire-brand::after {
+  content:"";
+  position:absolute;
+  left:10%;
+  right:10%;
+  bottom:-24px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(232,121,32,.65),transparent);
+  box-shadow:0 0 18px rgba(232,121,32,.18);
+}
+
+/* Subtle presentation labels, deliberately minimal. */
+.sidewire-tag {
+  position:absolute;
+  left:50%;
+  top:calc(50% + min(215px,17vw));
+  transform:translateX(-50%);
+  z-index:5;
+  color:#777d7f;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+@media(max-width:900px) {
+  .sidewire-brand {
+    width:360px;
+    max-width:42vw;
+  }
+  .sidewire-tag {
+    top:calc(50% + 145px);
+    font-size:7px;
+    letter-spacing:3px;
+  }
+}
+
+
+/* Open-phone helper */
+.phone-hint{
+  position:absolute;
+  left:24px;
+  bottom:18px;
+  z-index:15;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border:1px solid rgba(117,124,126,.45);
+  border-left:2px solid #e87920;
+  background:rgba(7,9,10,.82);
+  color:#8e9698;
+  font-size:7px;
+  font-weight:700;
+  letter-spacing:1.2px;
+  box-shadow:0 4px 16px rgba(0,0,0,.45);
+  pointer-events:none;
+}
+.phone-hint b{
+  color:#e87920;
+  font-size:8px;
+  letter-spacing:1px;
+}
+@media(max-width:900px){
+  .phone-hint{
+    left:10px;
+    bottom:10px;
+  }
+}
+
+
+.story-wip{
+  align-self:center;
+  margin:8px 4px 2px;
+  padding:6px 9px;
+  border:1px solid rgba(232,121,32,.45);
+  background:rgba(232,121,32,.07);
+  color:#aeb4b5;
+  font-size:7px;
+  line-height:1.35;
+  text-align:center;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+}
+
+
+/* =========================================================
+   SIDEWIRE PHONE BRANDING — v39
+   Silver SIDE + orange WIRE
+   ========================================================= */
+
+/* Text logo variants used by the phone UI */
+.phone .brand,
+.phone .logo,
+.phone .sidewire-logo,
+.phone .brand-logo{
+  color:#d7dadd !important;
+  font-weight:800;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  text-shadow:0 1px 0 #000, 0 0 8px rgba(232,121,32,.10);
+}
+
+.phone .brand .wire,
+.phone .logo .wire,
+.phone .sidewire-logo .wire,
+.phone .brand-logo .wire{
+  color:#e87920 !important;
+}
+
+/* If the phone logo is rendered as a single text node, color the full
+   word orange only through the dedicated fallback class; the central
+   presentation logo remains untouched. */
+.phone .phone-logo-wire{
+  color:#e87920 !important;
+}
+
+
+.phone .phone-logo-side{color:#d7dadd !important}
+.phone .phone-logo-wire{color:#e87920 !important}
+
+
+/* Phone wordmark: match SideWire brand colors */
+.phone .brand{
+  color:#d9dcdf !important;
+  font-style:normal !important;
+}
+.phone .brand span{
+  color:#d9dcdf !important;
+  font-style:normal !important;
+}
+.phone .brand i{
+  color:#e87920 !important;
+  font-style:normal !important;
+  font-weight:900 !important;
+}
+
+/* v41 — owner unlock confirmation */
+.phone .screen{position:absolute;overflow:hidden}
+
+.unlocked-overlay{
+  position:absolute;
+  inset:0;
+  z-index:80;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-sizing:border-box;
+  background:rgba(4,6,7,.96);
+  color:#d9dcdf;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+.unlocked-overlay.active{
+  opacity:1;
+  visibility:visible;
+}
+.unlocked-lock{
+  width:40px;
+  height:40px;
+  border:2px solid #e87920;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#e87920;
+  font-size:22px;
+  line-height:1;
+  box-shadow:0 0 22px rgba(232,121,32,.20);
+}
+.unlocked-title{
+  color:#e5e7e8;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.7px;
+  text-align:center;
+}
+
+
+
+/* =========================================================
+   SIDEWIRE BURNER v43
+   Hardware is a single 960 × 2016 PNG.
+   Master screen: X=56, Y=123, W=846, H=1265.
+   ========================================================= */
+
+.phone{
+  position:absolute;
+  left:24px;
+  top:50%;
+  /* Keep the complete 960×2016 hardware visible instead of letting the
+     screen fill the viewport. 360px is the desktop cap; 80vh keeps the
+     whole phone inside shorter screens. */
+  width:min(360px, 38.095vh, 32vw);
+  height:auto;
+  aspect-ratio:960 / 2016;
+  transform:translateY(-50%) translateX(calc(-100% - 32px));
+  filter:drop-shadow(0 18px 35px rgba(0,0,0,.65));
+  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  z-index:10;
+  overflow:visible;
+}
+
+.phone.open{
+  transform:translateY(-50%) translateX(0);
+}
+
+.phone-body-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+}
+
+.phone .screen{
+  position:absolute !important;
+  left:5.833333% !important;   /* 56 / 960 */
+  top:6.101190% !important;    /* 123 / 2016 */
+  width:88.125% !important;    /* 846 / 960 */
+  height:62.748016% !important;/* 1265 / 2016 */
+  right:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:#08090a !important;
+  overflow:hidden !important;
+  box-shadow:none !important;
+  z-index:5 !important;
+}
+
+/* The screen is now an actual overlay on the supplied PNG. */
+.phone-center-hitbox{
+  position:absolute;
+  left:50%;
+  top:71.5%;
+  width:78px;
+  height:70px;
+  transform:translate(-50%,-50%);
+  z-index:40;
+  border:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  cursor:pointer;
+  opacity:0;
+}
+
+/* Keep the existing open-phone helper usable with the new hardware. */
+.phone-hint{
+  z-index:15;
+}
+
+/* The old HTML hardware is gone; these rules are intentionally not used. */
+.phone .body,
+.phone .nav,
+.phone .keyboard{
+  display:none !important;
+}
+
+@media (max-width:900px){
+  .phone{
+    width:min(340px, 38.095vh, 52vw);
+    left:18px;
+  }
+  .phone-center-hitbox{
+    width:56px;
+    height:50px;
+  }
+}
+
+/* =========================================================
+   FINAL BURNER GEOMETRY — v43.1
+   The phone body is 960 × 2016.
+   Keep the complete hardware visible and hide it completely when closed.
+   ========================================================= */
+.phone-anchor{
+  position:absolute !important;
+  left:24px !important;
+  bottom:50% !important;
+  width:min(360px, 38.095vh, 32vw) !important;
+  height:auto !important;
+  aspect-ratio:960 / 2016 !important;
+  transform:translateY(50%) !important;
+  z-index:20 !important;
+  pointer-events:none !important;
+}
+
+.phone-anchor .phone{
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  height:100% !important;
+  aspect-ratio:960 / 2016 !important;
+  transform:translateX(calc(-100% - 32px)) !important;
+  pointer-events:auto !important;
+}
+
+.phone-anchor .phone.open{
+  transform:translateX(0) !important;
+}
+
+.phone-anchor .phone-body-image{
+  width:100% !important;
+  height:100% !important;
+}
+
+/* The display uses the exact master coordinates supplied for the PNG. */
+.phone-anchor .phone .screen{
+  left:5.833333% !important;
+  top:6.101190% !important;
+  width:88.125% !important;
+  height:62.748016% !important;
+}
+
+@media(max-width:900px){
+  .phone-anchor{
+    left:18px !important;
+    bottom:50% !important;
+    width:min(340px, 38.095vh, 52vw) !important;
+  }
+}
+
